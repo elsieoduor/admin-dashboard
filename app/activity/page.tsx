@@ -85,7 +85,7 @@ const Activity = () => {
                     <td className="border-b p-3">{act.id}</td>
                     <td className="border-b p-3">{act.action}</td>
                     <td className="border-b p-3">{formatTimestamp(act.timestamp)}</td>
-                    <td className={`border-b p-3 ${getStatusColor(act.status)}`}>
+                    <td className={`border-b p-3 text-center${getStatusColor(act.status)}`}>
                       {act.status.charAt(0).toUpperCase() + act.status.slice(1)}
                     </td>
                   </tr>
