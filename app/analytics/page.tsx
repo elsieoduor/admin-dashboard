@@ -10,7 +10,7 @@ import Navbar from '@/components/Navbar';
 ChartJS.register(Title, Tooltip, Legend, LineElement, PointElement, CategoryScale, LinearScale, ArcElement);
 
 const fetchAnalytics = async () => {
-  // Replace with your actual API call
+  
   return {
     serviceRequests: 120,
     technicianPerformance: 85,
@@ -48,7 +48,7 @@ const Analytics = () => {
     datasets: [
       {
         label: 'Service Requests',
-        data: [50, 60, 70, 80, 90, 100, 120],
+        data: [50, 60, 10, 80, 90, 100, 99],
         borderColor: '#1E90FF',
         backgroundColor: 'rgba(30, 144, 255, 0.2)',
         borderWidth: 2,
