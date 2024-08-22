@@ -1,8 +1,8 @@
 'use client'
 import { useState } from 'react';
-import { useRouter } from 'next/router';
-import Sidebar from '../../components/Sidebar';
-import Navbar from '../../components/Navbar';
+import { useRouter } from 'next/navigation';
+import Sidebar from '@/components/Sidebar';
+import Navbar from '@/components/Navbar';
 
 const addTechnician = async (technician: any) => {
   // Replace with your actual API call
