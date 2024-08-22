@@ -1,9 +1,11 @@
-'use client'
+'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '../../components/Sidebar';
 import Navbar from '../../components/Navbar';
 import { PencilAltIcon, EyeIcon, TrashIcon } from '@heroicons/react/outline';
+import Image from 'next/image';
+import Link from 'next/link';
 
 interface Technician {
   id: string;
@@ -13,15 +15,15 @@ interface Technician {
   photo: string;
 }
 
-// Mock data fetching
+// Mock function to fetch technicians data
 const fetchTechnicians = async (search: string): Promise<Technician[]> => {
-
   return [
     { id: '1', name: 'John Doe', category: 'Electrician', email: 'john.doe@example.com', photo: '/images/profile1.jpg' },
     { id: '2', name: 'Jane Smith', category: 'Plumber', email: 'jane.smith@example.com', photo: '/images/profile2.jpg' },
   ].filter(tech => tech.name.toLowerCase().includes(search.toLowerCase()));
 };
 
+// Technicians Page Component
 const Technicians = () => {
   const [technicians, setTechnicians] = useState<Technician[]>([]);
   const [search, setSearch] = useState('');
@@ -34,6 +36,15 @@ const Technicians = () => {
     };
     getTechnicians();
   }, [search]);
+
+  const handleDelete = async (id: string) => {
+    if (confirm('Are you sure you want to delete this technician?')) {
+      // Call API to delete technician here
+      console.log('Deleting technician:', id);
+      // Optionally, remove the technician from the state to reflect the deletion
+      setTechnicians(technicians.filter(tech => tech.id !== id));
+    }
+  };
 
   return (
     <div className="flex h-screen">
@@ -50,51 +61,51 @@ const Technicians = () => {
               onChange={(e) => setSearch(e.target.value)}
               className="border rounded-lg p-2 mr-4"
             />
-            <button
-              onClick={() => router.push('/technicians/add')}
-              className="bg-primary text-white py-2 px-4 rounded"
-            >
-              Add Technician
-            </button>
+            <Link href="/technicians/add">
+              <button className="bg-primary text-white py-2 px-4 rounded">
+                Add Technician
+              </button>
+            </Link>
           </div>
           <div className="bg-white p-6 rounded-lg shadow-md">
-            <table className="w-full">
+            <table className="w-full border-separate border-spacing-0">
               <thead>
-                <tr>
-                  <th className="text-left">Photo</th>
-                  <th className="text-left">Name</th>
-                  <th className="text-left">Category</th>
-                  <th className="text-left">Email</th>
-                  <th className="text-left">Actions</th>
+                <tr className="bg-blue-100">
+                  <th className="border-b-2 border-blue-200 p-3 text-left text-blue-700">Photo</th>
+                  <th className="border-b-2 border-blue-200 p-3 text-left text-blue-700">Name</th>
+                  <th className="border-b-2 border-blue-200 p-3 text-left text-blue-700">Category</th>
+                  <th className="border-b-2 border-blue-200 p-3 text-left text-blue-700">Email</th>
+                  <th className="border-b-2 border-blue-200 p-3 text-left text-blue-700">Actions</th>
                 </tr>
               </thead>
               <tbody>
                 {technicians.map((tech) => (
-                  <tr key={tech.id}>
-                    <td><img src={tech.photo} alt={tech.name} className="w-12 h-12 rounded-full" /></td>
-                    <td>{tech.name}</td>
-                    <td>{tech.category}</td>
-                    <td>{tech.email}</td>
-                    <td className="flex space-x-2">
+                  <tr key={tech.id} className="hover:bg-blue-50">
+                    <td className="border-b p-3">
+                      <Image
+                        src={tech.photo}
+                        alt={tech.name}
+                        width={50}
+                        height={50}
+                        className="w-12 h-12 rounded-full"
+                      />
+                    </td>
+                    <td className="border-b p-3">{tech.name}</td>
+                    <td className="border-b p-3">{tech.category}</td>
+                    <td className="border-b p-3">{tech.email}</td>
+                    <td className="border-b p-3 flex space-x-2">
+                      <Link href={`/technicians/${tech.id}`}>
+                        <button className="p-2 hover:bg-blue-100 rounded">
+                          <EyeIcon className="w-6 h-6 text-blue-500" />
+                        </button>
+                      </Link>
+                      <Link href={`/technicians/edit/${tech.id}`}>
+                        <button className="p-2 hover:bg-yellow-100 rounded">
+                          <PencilAltIcon className="w-6 h-6 text-yellow-500" />
+                        </button>
+                      </Link>
                       <button
-                        onClick={() => router.push(`/technicians/${tech.id}`)}
-                        className="p-2 hover:bg-blue-100 rounded"
-                      >
-                        <EyeIcon className="w-6 h-6 text-blue-500" />
-                      </button>
-                      <button
-                        onClick={() => router.push(`/technicians/edit/${tech.id}`)}
-                        className="p-2 hover:bg-yellow-100 rounded"
-                      >
-                        <PencilAltIcon className="w-6 h-6 text-yellow-500" />
-                      </button>
-                      <button
-                        onClick={() => {
-                          if (confirm('Are you sure you want to delete this technician?')) {
-                            // Call API to delete technician
-                            console.log('Deleting technician:', tech.id);
-                          }
-                        }}
+                        onClick={() => handleDelete(tech.id)}
                         className="p-2 hover:bg-red-100 rounded"
                       >
                         <TrashIcon className="w-6 h-6 text-red-500" />
