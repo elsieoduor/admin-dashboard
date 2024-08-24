@@ -1,45 +1,30 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { 
   db, 
-  collection, 
-  getDocs, 
-  addDoc, 
-  query, 
-  where, 
-  getDoc, 
   doc, 
+  getDoc, 
   updateDoc, 
   deleteDoc 
-} from '../../../firebase';
+} from '../../../../firebase';
 
-// GET /api/technicians
+// GET /api/technicians/[id]
 export async function GET(request: NextRequest) {
   const url = new URL(request.url);
-  const search = url.searchParams.get('search') || '';
+  const id = url.pathname.split('/').pop();
 
-  try {
-    const techniciansRef = collection(db, 'technicians');
-    const q = search
-      ? query(techniciansRef, where('name', '>=', search), where('name', '<=', search + '\uf8ff'))
-      : techniciansRef;
-
-    const querySnapshot = await getDocs(q);
-    const technicians = querySnapshot.docs.map(doc => ({ id: doc.id, ...doc.data() }));
-    return NextResponse.json(technicians);
-  } catch (error) {
-    console.error('Failed to fetch technicians:', error);
+  if (!id) {
     return NextResponse.error();
   }
-}
 
-// POST /api/technicians
-export async function POST(request: NextRequest) {
   try {
-    const newTechnician = await request.json();
-    const docRef = await addDoc(collection(db, 'technicians'), newTechnician);
-    return NextResponse.json({ id: docRef.id, ...newTechnician }, { status: 201 });
+    const docSnap = await getDoc(doc(db, 'technicians', id));
+    if (docSnap.exists()) {
+      return NextResponse.json({ id, ...docSnap.data() });
+    } else {
+      return NextResponse.error();
+    }
   } catch (error) {
-    console.error('Failed to add technician:', error);
+    console.error('Failed to fetch technician:', error);
     return NextResponse.error();
   }
 }
