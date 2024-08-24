@@ -5,8 +5,24 @@ import Sidebar from '@/components/Sidebar';
 import Navbar from '@/components/Navbar';
 
 const addTechnician = async (technician: any) => {
-  // Replace with your actual API call
-  console.log('Adding technician:', technician);
+  try {
+    const response = await fetch('/api/technicians', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(technician),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to add technician');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error adding technician:', error);
+    throw error;
+  }
 };
 
 const AddTechnician = () => {
@@ -20,9 +36,14 @@ const AddTechnician = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    await addTechnician(technician);
-    alert('Technician added successfully!');
-    router.push('/technicians');
+
+    try {
+      await addTechnician(technician);
+      alert('Technician added successfully!');
+      router.push('/technicians');
+    } catch (error) {
+      alert('Failed to add technician');
+    }
   };
 
   return (
