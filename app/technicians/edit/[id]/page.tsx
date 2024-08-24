@@ -7,10 +7,16 @@ import Image from 'next/image';
 
 interface Technician {
   id: string;
-  name: string;
-  category: string;
+  firstName: string;
+  lastName: string;
+  phoneNumber: string;
   email: string;
-  photo: string;
+  profilePicture: string;
+  bio: string;
+  skills: string[];
+  availabilityStatus: string;
+  workingHours: string;
+  serviceCategory: string;
 }
 
 // Fetch technician data from the API
@@ -75,12 +81,17 @@ const EditTechnician = () => {
       try {
         await updateTechnician(id as string, technician);
         alert('Technician updated successfully!');
-        router.push(`/technicians/${id}`); 
+        router.push(`/technicians/${id}`);
       } catch (error) {
         console.error('Failed to update technician:', error);
         alert('Failed to update technician.');
       }
     }
+  };
+
+  const handleSkillsChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setTechnician(prev => prev ? { ...prev, skills: value.split(',').map(skill => skill.trim()) } : null);
   };
 
   if (!technician) return <div>Loading...</div>;
@@ -93,23 +104,32 @@ const EditTechnician = () => {
         <main className="p-6 flex-1 overflow-auto">
           <h2 className="text-2xl font-bold">Edit Technician</h2>
           <div className="bg-white p-6 rounded-lg shadow-md mt-6">
-            <Image src={technician.photo} alt={technician.name} width={120} height={120} className="w-24 h-24 rounded-full mb-4" />
+            <Image src={technician.profilePicture} alt={`${technician.firstName} ${technician.lastName}`} width={120} height={120} className="w-24 h-24 rounded-full mb-4" />
             <form onSubmit={handleSubmit}>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Name</label>
+                <label className="block text-sm font-medium text-gray-700">First Name</label>
                 <input
                   type="text"
-                  value={technician.name}
-                  onChange={(e) => setTechnician({ ...technician, name: e.target.value })}
+                  value={technician.firstName}
+                  onChange={(e) => setTechnician(prev => prev ? { ...prev, firstName: e.target.value } : null)}
                   className="mt-1 p-2 border rounded-lg w-full"
                 />
               </div>
               <div className="mb-4">
-                <label className="block text-sm font-medium text-gray-700">Category</label>
+                <label className="block text-sm font-medium text-gray-700">Last Name</label>
                 <input
                   type="text"
-                  value={technician.category}
-                  onChange={(e) => setTechnician({ ...technician, category: e.target.value })}
+                  value={technician.lastName}
+                  onChange={(e) => setTechnician(prev => prev ? { ...prev, lastName: e.target.value } : null)}
+                  className="mt-1 p-2 border rounded-lg w-full"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Phone Number</label>
+                <input
+                  type="text"
+                  value={technician.phoneNumber}
+                  onChange={(e) => setTechnician(prev => prev ? { ...prev, phoneNumber: e.target.value } : null)}
                   className="mt-1 p-2 border rounded-lg w-full"
                 />
               </div>
@@ -118,7 +138,63 @@ const EditTechnician = () => {
                 <input
                   type="email"
                   value={technician.email}
-                  onChange={(e) => setTechnician({ ...technician, email: e.target.value })}
+                  onChange={(e) => setTechnician(prev => prev ? { ...prev, email: e.target.value } : null)}
+                  className="mt-1 p-2 border rounded-lg w-full"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Profile Picture URL</label>
+                <input
+                  type="text"
+                  value={technician.profilePicture}
+                  onChange={(e) => setTechnician(prev => prev ? { ...prev, profilePicture: e.target.value } : null)}
+                  className="mt-1 p-2 border rounded-lg w-full"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Bio</label>
+                <textarea
+                  value={technician.bio}
+                  onChange={(e) => setTechnician(prev => prev ? { ...prev, bio: e.target.value } : null)}
+                  className="mt-1 p-2 border rounded-lg w-full"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Skills (comma-separated)</label>
+                <input
+                  type="text"
+                  value={technician.skills.join(', ')}
+                  onChange={handleSkillsChange}
+                  className="mt-1 p-2 border rounded-lg w-full"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Availability Status</label>
+                <select
+                  value={technician.availabilityStatus}
+                  onChange={(e) => setTechnician(prev => prev ? { ...prev, availabilityStatus: e.target.value } : null)}
+                  className="mt-1 p-2 border rounded-lg w-full"
+                >
+                  <option value="active">Active</option>
+                  <option value="inactive">Inactive</option>
+                  <option value="working">Working</option>
+                </select>
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Working Hours</label>
+                <input
+                  type="text"
+                  value={technician.workingHours}
+                  onChange={(e) => setTechnician(prev => prev ? { ...prev, workingHours: e.target.value } : null)}
+                  className="mt-1 p-2 border rounded-lg w-full"
+                />
+              </div>
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700">Service Category</label>
+                <input
+                  type="text"
+                  value={technician.serviceCategory}
+                  onChange={(e) => setTechnician(prev => prev ? { ...prev, serviceCategory: e.target.value } : null)}
                   className="mt-1 p-2 border rounded-lg w-full"
                 />
               </div>

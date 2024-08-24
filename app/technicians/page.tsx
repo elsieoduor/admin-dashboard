@@ -9,9 +9,10 @@ import Link from 'next/link';
 
 interface Technician {
   id: string;
-  name: string;
-  category: string;
-  email: string;
+  firstName: string;
+  serviceCategory: string;
+  phoneNumber: string;
+  availabilityStatus: string;
   photo: string;
 }
 
@@ -96,8 +97,9 @@ const Technicians = () => {
                 <tr className="bg-blue-100">
                   <th className="border-b-2 border-blue-200 p-3 text-left text-blue-700">Photo</th>
                   <th className="border-b-2 border-blue-200 p-3 text-left text-blue-700">Name</th>
+                  <th className="border-b-2 border-blue-200 p-3 text-left text-blue-700">Phone Number</th>
+                  <th className="border-b-2 border-blue-200 p-3 text-left text-blue-700">Activity Status</th>
                   <th className="border-b-2 border-blue-200 p-3 text-left text-blue-700">Category</th>
-                  <th className="border-b-2 border-blue-200 p-3 text-left text-blue-700">Email</th>
                   <th className="border-b-2 border-blue-200 p-3 text-left text-blue-700">Actions</th>
                 </tr>
               </thead>
@@ -107,29 +109,30 @@ const Technicians = () => {
                     <td className="border-b p-3">
                       <Image
                         src={tech.photo}
-                        alt={tech.name}
+                        alt={tech.firstName}
                         width={50}
                         height={50}
                         className="w-12 h-12 rounded-full"
                       />
                     </td>
-                    <td className="border-b p-3">{tech.name}</td>
-                    <td className="border-b p-3">{tech.category}</td>
-                    <td className="border-b p-3">{tech.email}</td>
+                    <td className="border-b p-3">{tech.firstName}</td>
+                    <td className="border-b p-3">{tech.phoneNumber}</td>
+                    <td className="border-b p-3">{tech.availabilityStatus}</td>
+                    <td className="border-b p-3">{tech.serviceCategory}</td>
                     <td className="border-b p-3 flex space-x-2">
                       <Link href={`/technicians/${tech.id}`}>
-                        <button className="p-2 hover:bg-blue-100 rounded">
+                        <button className="p-3 hover:bg-blue-100 rounded">
                           <EyeIcon className="w-6 h-6 text-blue-500" />
                         </button>
                       </Link>
                       <Link href={`/technicians/edit/${tech.id}`}>
-                        <button className="p-2 hover:bg-yellow-100 rounded">
+                        <button className="p-3 hover:bg-yellow-100 rounded">
                           <PencilAltIcon className="w-6 h-6 text-yellow-500" />
                         </button>
                       </Link>
                       <button
                         onClick={() => handleDelete(tech.id)}
-                        className="p-2 hover:bg-red-100 rounded"
+                        className="p-3 hover:bg-red-100 rounded"
                       >
                         <TrashIcon className="w-6 h-6 text-red-500" />
                       </button>
