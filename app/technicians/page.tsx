@@ -1,8 +1,8 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import Sidebar from '../../components/Sidebar';
-import Navbar from '../../components/Navbar';
+import Sidebar from '@/components/Sidebar';
+import Navbar from '@/components/Navbar';
 import { PencilAltIcon, EyeIcon, TrashIcon } from '@heroicons/react/outline';
 import Image from 'next/image';
 import Link from 'next/link';
@@ -15,15 +15,36 @@ interface Technician {
   photo: string;
 }
 
-// Mock function to fetch technicians data
+// Fetch technicians data from the API
 const fetchTechnicians = async (search: string): Promise<Technician[]> => {
-  return [
-    { id: '1', name: 'John Doe', category: 'Electrician', email: 'john.doe@example.com', photo: '/images/profile1.jpg' },
-    { id: '2', name: 'Jane Smith', category: 'Plumber', email: 'jane.smith@example.com', photo: '/images/profile2.jpg' },
-  ].filter(tech => tech.name.toLowerCase().includes(search.toLowerCase()));
+  try {
+    const response = await fetch(`/api/technicians?search=${search}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch technicians');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching technicians:', error);
+    return [];
+  }
 };
 
-// Technicians Page Component
+// Delete technician data via the API
+const deleteTechnician = async (id: string) => {
+  try {
+    const response = await fetch(`/api/technicians/${id}`, {
+      method: 'DELETE',
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to delete technician');
+    }
+  } catch (error) {
+    console.error('Error deleting technician:', error);
+    throw error;
+  }
+};
+
 const Technicians = () => {
   const [technicians, setTechnicians] = useState<Technician[]>([]);
   const [search, setSearch] = useState('');
@@ -39,10 +60,12 @@ const Technicians = () => {
 
   const handleDelete = async (id: string) => {
     if (confirm('Are you sure you want to delete this technician?')) {
-      // Call API to delete technician here
-      console.log('Deleting technician:', id);
-      // Optionally, remove the technician from the state to reflect the deletion
-      setTechnicians(technicians.filter(tech => tech.id !== id));
+      try {
+        await deleteTechnician(id);
+        setTechnicians(technicians.filter(tech => tech.id !== id));
+      } catch (error) {
+        alert('Failed to delete technician.');
+      }
     }
   };
 
