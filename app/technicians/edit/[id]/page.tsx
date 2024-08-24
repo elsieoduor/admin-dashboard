@@ -1,5 +1,4 @@
 'use client';
-
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
@@ -14,22 +13,46 @@ interface Technician {
   photo: string;
 }
 
-// Mock function to fetch technician data
+// Fetch technician data from the API
 const fetchTechnician = async (id: string): Promise<Technician> => {
-  // Replace with your actual API call
-  return { id: '1', name: 'John Doe', category: 'Electrician', email: 'john.doe@example.com', photo: '/images/profile1.jpg' };
+  try {
+    const response = await fetch(`/api/technicians/${id}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch technician data');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching technician:', error);
+    throw error;
+  }
 };
 
-// Mock function to update technician data
+// Update technician data via the API
 const updateTechnician = async (id: string, technician: Technician) => {
-  // Replace with your actual API call
-  console.log('Updating technician:', id, technician);
+  try {
+    const response = await fetch(`/api/technicians/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(technician),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update technician');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error updating technician:', error);
+    throw error;
+  }
 };
 
 const EditTechnician = () => {
   const [technician, setTechnician] = useState<Technician | null>(null);
   const router = useRouter();
-  const { id } = useParams(); // Correctly extract the ID from the URL parameters
+  const { id } = useParams();
 
   useEffect(() => {
     const getTechnician = async () => {
@@ -42,7 +65,7 @@ const EditTechnician = () => {
         }
       }
     };
-    
+
     getTechnician();
   }, [id]);
 
@@ -52,7 +75,7 @@ const EditTechnician = () => {
       try {
         await updateTechnician(id as string, technician);
         alert('Technician updated successfully!');
-        router.push(`/technicians/${id}`); // Redirect to the technician detail page after updating
+        router.push(`/technicians/${id}`); 
       } catch (error) {
         console.error('Failed to update technician:', error);
         alert('Failed to update technician.');
