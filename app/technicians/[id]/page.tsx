@@ -1,5 +1,4 @@
 'use client';
-
 import { useState, useEffect } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
@@ -14,46 +13,72 @@ interface Technician {
   photo: string;
 }
 
-// Mock function to fetch technician data
+// Fetch technician data from the API
 const fetchTechnician = async (id: string): Promise<Technician> => {
-  // Replace with your actual API call
-  return { id: '1', name: 'John Doe', category: 'Electrician', email: 'john.doe@example.com', photo: '/images/profile1.jpg' };
+  try {
+    const response = await fetch(`/api/technicians/${id}`);
+    if (!response.ok) {
+      throw new Error('Failed to fetch technician data');
+    }
+    return await response.json();
+  } catch (error) {
+    console.error('Error fetching technician:', error);
+    throw error;
+  }
 };
 
-// Mock function to update technician data
+// Update technician data via the API
 const updateTechnician = async (id: string, technician: Technician) => {
-  // Replace with your actual API call
-  console.log('Updating technician:', id, technician);
+  try {
+    const response = await fetch(`/api/technicians/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(technician),
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to update technician');
+    }
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error updating technician:', error);
+    throw error;
+  }
 };
 
 const TechnicianDetail = () => {
   const [technician, setTechnician] = useState<Technician | null>(null);
   const router = useRouter();
-  const params = useParams();
-  const id = params.id as string | undefined;
+  const { id } = useParams();
+
+  // Ensure id is treated as a string
+  const technicianId = Array.isArray(id) ? id[0] : id;
 
   useEffect(() => {
     const getTechnician = async () => {
-      if (id) {
+      if (technicianId) {
         try {
-          const data = await fetchTechnician(id);
+          const data = await fetchTechnician(technicianId);
           setTechnician(data);
         } catch (error) {
           console.error('Failed to fetch technician:', error);
         }
       }
     };
-    
+
     getTechnician();
-  }, [id]);
+  }, [technicianId]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (id && technician) {
+    if (technicianId && technician) {
       try {
-        await updateTechnician(id, technician);
+        await updateTechnician(technicianId, technician);
         alert('Technician updated successfully!');
-        router.push('/technicians'); // Navigate back to the technicians list page
+        router.push('/technicians');
       } catch (error) {
         console.error('Failed to update technician:', error);
         alert('Failed to update technician.');
