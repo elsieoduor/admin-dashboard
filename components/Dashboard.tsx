@@ -1,15 +1,26 @@
-'use client'
-import Sidebar from '../components/Sidebar';
-import Navbar from '../components/Navbar';
-import { useEffect, useState } from 'react';
+'use client';
+
+import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { Bar } from 'react-chartjs-2';
 import { Chart as ChartJS, CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend } from 'chart.js';
+import Sidebar from './Sidebar';
+import Navbar from './Navbar';
 
-// Register necessary Chart.js components
 ChartJS.register(CategoryScale, LinearScale, BarElement, Title, Tooltip, Legend);
 
-const fetchDashboardData = async () => {
+
+interface DashboardData {
+  users: number;
+  technicians: number;
+  serviceRequests: number;
+  visits: number[];
+  serviceRequestsData: number[];
+}
+
+// Mock fetch function
+const fetchDashboardData = async (): Promise<DashboardData> => {
   return {
     users: 1200,
     technicians: 45,
@@ -20,7 +31,8 @@ const fetchDashboardData = async () => {
 };
 
 const Dashboard = () => {
-  const [data, setData] = useState({
+  // Initialize state with the DashboardData interface
+  const [data, setData] = useState<DashboardData>({
     users: 0,
     technicians: 0,
     serviceRequests: 0,

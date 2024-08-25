@@ -4,11 +4,11 @@ import { useRouter } from 'next/navigation';
 import { getAuth, onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { getFirestore, doc, getDoc } from 'firebase/firestore';
 import Image from 'next/image';
-import { auth, db } from '../firebase'; // Adjust path as necessary
+import { auth, db } from '../firebase'; 
 
 const Navbar = () => {
   const [user, setUser] = useState<User | null>(null);
-  const [userProfile, setUserProfile] = useState<{ firstName?: string } | null>(null); // Optional firstName
+  const [userProfile, setUserProfile] = useState<{ firstName?: string } | null>(null); 
   const router = useRouter();
 
   useEffect(() => {
@@ -25,11 +25,11 @@ const Navbar = () => {
             setUserProfile(userDoc.data() as { firstName?: string });
           } else {
             console.error('No user profile found in Firestore');
-            setUserProfile({}); // Fallback to prevent undefined
+            setUserProfile({}); 
           }
         } catch (error) {
           console.error('Error fetching user profile:', error);
-          setUserProfile({}); // Fallback to prevent undefined
+          setUserProfile({}); 
         }
       } else {
         setUser(null);
