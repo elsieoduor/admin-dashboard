@@ -37,10 +37,9 @@ const AddDispute = () => {
       setIssue('');
       setStatus('Incomplete');
 
-      // Redirect to the Disputes page
       setTimeout(() => {
         router.push('/disputes');
-      }, 1000); // Delay to let the success message be visible
+      }, 1000); 
 
     } catch (error) {
       setError('Failed to add dispute');
