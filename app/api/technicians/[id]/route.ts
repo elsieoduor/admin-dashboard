@@ -9,11 +9,11 @@ import {
 
 // GET /api/technicians/[id]
 export async function GET(request: NextRequest) {
-  const url = new URL(request.url);
-  const id = url.pathname.split('/').pop();
+  const { pathname } = new URL(request.url);
+  const id = pathname.split('/').pop();
 
   if (!id) {
-    return NextResponse.error();
+    return NextResponse.json({ error: 'Technician ID is required' }, { status: 400 });
   }
 
   try {
@@ -21,21 +21,21 @@ export async function GET(request: NextRequest) {
     if (docSnap.exists()) {
       return NextResponse.json({ id, ...docSnap.data() });
     } else {
-      return NextResponse.error();
+      return NextResponse.json({ error: 'Technician not found' }, { status: 404 });
     }
   } catch (error) {
     console.error('Failed to fetch technician:', error);
-    return NextResponse.error();
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
 // PUT /api/technicians/[id]
 export async function PUT(request: NextRequest) {
-  const url = new URL(request.url);
-  const id = url.pathname.split('/').pop();
+  const { pathname } = new URL(request.url);
+  const id = pathname.split('/').pop();
 
   if (!id) {
-    return NextResponse.error();
+    return NextResponse.json({ error: 'Technician ID is required' }, { status: 400 });
   }
 
   try {
@@ -44,17 +44,17 @@ export async function PUT(request: NextRequest) {
     return NextResponse.json({ id, ...updatedTechnician });
   } catch (error) {
     console.error('Failed to update technician:', error);
-    return NextResponse.error();
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
 
 // DELETE /api/technicians/[id]
 export async function DELETE(request: NextRequest) {
-  const url = new URL(request.url);
-  const id = url.pathname.split('/').pop();
+  const { pathname } = new URL(request.url);
+  const id = pathname.split('/').pop();
 
   if (!id) {
-    return NextResponse.error();
+    return NextResponse.json({ error: 'Technician ID is required' }, { status: 400 });
   }
 
   try {
@@ -62,6 +62,6 @@ export async function DELETE(request: NextRequest) {
     return NextResponse.json({ message: 'Technician deleted successfully' }, { status: 204 });
   } catch (error) {
     console.error('Failed to delete technician:', error);
-    return NextResponse.error();
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
