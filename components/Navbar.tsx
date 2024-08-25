@@ -58,7 +58,7 @@ const Navbar = () => {
             <div className="flex items-center">
               <span className="ml-2 font-medium mr-3">Hello, {userProfile?.firstName || 'User'}</span>
               <Image
-                src={user.photoURL || '/default-profile.png'}
+                src={user.photoURL || '/default-profile.jpg'}
                 alt="Profile"
                 width={32}
                 height={32}
