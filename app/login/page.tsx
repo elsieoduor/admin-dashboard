@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { signInWithEmailAndPassword, AuthError } from 'firebase/auth';
-import { auth } from '../../firebase'; // Adjust path as necessary
+import { auth } from '../../firebase'; 
 import Link from 'next/link';
 
 const Login = () => {
@@ -16,15 +16,15 @@ const Login = () => {
 
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
-      console.log('User:', userCredential.user); // Log user object
+      console.log('User:', userCredential.user); 
       
       // Store the token in localStorage
-      const token = await userCredential.user.getIdToken(); // Fetch the token
-      localStorage.setItem('authToken', token); // Store token in localStorage
+      const token = await userCredential.user.getIdToken(); 
+      localStorage.setItem('authToken', token);
       
-      router.push('/'); // Redirect to dashboard after successful login
+      router.push('/');
     } catch (error) {
-      // Check if the error is an instance of AuthError and has a code property
+    
       if (error && typeof (error as AuthError).code === 'string') {
         const authError = error as AuthError;
         switch (authError.code) {
@@ -74,11 +74,11 @@ const Login = () => {
           {error && <p className="text-red-500 mb-4">{error}</p>}
           <button
             type="submit"
-            className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600"
+            className="w-full bg-blue-500 text-white py-2 px-4 rounded hover:bg-blue-600 mb-3"
           >
             Login
           </button>
-          <p>Dont have an account? <span><Link href={'/signup'} className='text-itallic'>Signup</Link></span></p>
+          <p>Dont have an account? <span><Link href={'/signup'} className='font-itallic underline text-[#003262] text-sm mt-5'>Signup</Link></span></p>
 
         </form>
       </div>

@@ -49,7 +49,7 @@ const Signup = () => {
           localStorage.setItem('authToken', result.token);
         }
 
-        router.push('/login'); // Redirect to login after successful signup
+        router.push('/login');
       } else {
         setError(result.error || 'Failed to sign up');
       }
