@@ -1,12 +1,12 @@
-// pages/api/user/route.ts
-import type { NextApiRequest, NextApiResponse } from 'next';
+import { NextRequest, NextResponse } from 'next/server';
 import { auth, firestore } from '../../../firebaseAdmin'; // Adjust import based on your setup
 
-export default async function handler(req: NextApiRequest, res: NextApiResponse) {
-  const token = req.headers.authorization?.split(' ')[1]; // Extract token from Authorization header
+// GET /api/user
+export async function GET(request: NextRequest) {
+  const token = request.headers.get('Authorization')?.split(' ')[1]; // Extract token from Authorization header
 
   if (!token) {
-    return res.status(401).json({ error: 'Unauthorized' });
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
   }
 
   try {
@@ -15,22 +15,39 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const userId = decodedToken.uid;
     const userRef = firestore.collection('users').doc(userId);
 
-    if (req.method === 'GET') {
-      const userDoc = await userRef.get();
-      if (userDoc.exists) {
-        return res.status(200).json(userDoc.data());
-      } else {
-        return res.status(404).json({ error: 'User not found' });
-      }
-    } else if (req.method === 'PUT') {
-      const { firstName, lastName, email, phone, address, role } = req.body;
-      await userRef.update({ firstName, lastName, email, phone, address, role });
-      return res.status(200).json({ message: 'Profile updated successfully' });
+    const userDoc = await userRef.get();
+    if (userDoc.exists) {
+      return NextResponse.json(userDoc.data());
     } else {
-      return res.status(405).json({ error: 'Method not allowed' });
+      return NextResponse.json({ error: 'User not found' }, { status: 404 });
     }
   } catch (error) {
     console.error('Error handling profile request:', error);
-    return res.status(500).json({ error: 'Internal server error' });
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
+  }
+}
+
+// PUT /api/user
+export async function PUT(request: NextRequest) {
+  const token = request.headers.get('Authorization')?.split(' ')[1]; // Extract token from Authorization header
+
+  if (!token) {
+    return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+  }
+
+  try {
+    // Verify token using Firebase Admin SDK
+    const decodedToken = await auth.verifyIdToken(token);
+    const userId = decodedToken.uid;
+    const userRef = firestore.collection('users').doc(userId);
+
+    const updatedData = await request.json();
+    const { firstName, lastName, email, phone, address, role } = updatedData;
+    await userRef.update({ firstName, lastName, email, phone, address, role });
+
+    return NextResponse.json({ message: 'Profile updated successfully' });
+  } catch (error) {
+    console.error('Error handling profile update:', error);
+    return NextResponse.json({ error: 'Internal server error' }, { status: 500 });
   }
 }
