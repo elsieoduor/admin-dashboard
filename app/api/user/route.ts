@@ -1,3 +1,4 @@
+// pages/api/user/route.ts
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { auth, firestore } from '../../../firebaseAdmin'; // Adjust import based on your setup
 
