@@ -14,7 +14,7 @@ const Sidebar = () => {
         </ul>
       </nav>
       <div className="absolute bottom-4 w-64 px-2">
-        <Link href="/settings" className="block py-2 px-4  rounded">Settings
+        <Link href="/settings" className="block py-2 px-4  rounded">My Profile
         </Link>
         <button
           // onClick={() => signOut()}
