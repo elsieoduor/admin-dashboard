@@ -7,7 +7,7 @@ import Navbar from '../../components/Navbar';
 
 const fetchUserProfile = async (token: string) => {
   try {
-    const response = await fetch('/api/user/profile', {
+    const response = await fetch('/api/user', {
       headers: {
         'Authorization': `Bearer ${token}`,
       },
