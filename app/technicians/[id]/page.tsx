@@ -4,6 +4,10 @@ import { useRouter, useParams } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
 import Navbar from '@/components/Navbar';
 import Image from 'next/image';
+import { useConfirmModal } from '@/utils/hooks/useConfirmModal';
+import ConfirmModal from '@/components/ConfirmModal';
+import toast from 'react-hot-toast';
+import Spinner from '@/components/Spinner';
 
 interface Technician {
   id: string;
@@ -61,6 +65,8 @@ const TechnicianDetail = () => {
   const router = useRouter();
   const { id } = useParams();
 
+  const { isOpen, message, confirmAction, cancelAction, openModal } = useConfirmModal();
+
   // Ensure id is treated as a string
   const technicianId = Array.isArray(id) ? id[0] : id;
 
@@ -81,16 +87,20 @@ const TechnicianDetail = () => {
     getTechnician();
   }, [technicianId]);
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (technicianId && technician) {
+      setIsLoading(true);
       try {
         await updateTechnician(technicianId, technician);
-        alert('Technician updated successfully!');
+        toast.success('Technician updated successfully!');
         router.push('/technicians');
       } catch (error) {
         console.error('Failed to update technician:', error);
-        alert('Failed to update technician. Please check the console for details.');
+        toast.success('Failed to update technician. Please check the console for details.');
+      }finally {
+        setIsLoading(false);
       }
     }
   };
@@ -100,8 +110,8 @@ const TechnicianDetail = () => {
     setTechnician(prev => prev ? { ...prev, skills: value.split(',').map(skill => skill.trim()) } : null);
   };
 
-  const handleDelete = async () => {
-    if (confirm('Are you sure you want to delete this technician?')) {
+  const handleDelete = () => {
+    openModal('Are you sure you want to delete this technicians?', async () => {
       try {
         const response = await fetch(`/api/technicians/${technicianId}`, {
           method: 'DELETE',
@@ -109,14 +119,15 @@ const TechnicianDetail = () => {
         if (!response.ok) {
           throw new Error('Failed to delete technician');
         }
-        alert('Technician deleted successfully!');
+        toast.success('Technician deleted successfully!');
         router.push('/technicians');
       } catch (error) {
         console.error('Failed to delete technician:', error);
-        alert('Failed to delete technician. Please check the console for details.');
+        toast.error('Failed to delete technician. Please check the console for details.');
       }
-    }
+    });
   };
+
 
   if (loading) return <div>Loading...</div>;
   if (!technician) return <div>Technician not found</div>;
@@ -239,14 +250,20 @@ const TechnicianDetail = () => {
               </div>
               <button
                 type="submit"
-                className="bg-blue-500 text-white py-2 px-4 rounded-lg"
+                className="bg-blue-500 text-white py-2 px-4 rounded-lg w-full"
               >
-                Save Changes
+                {isLoading ? <Spinner/> : "Save Changes"}
               </button>
             </form>
           </div>
         </main>
       </div>
+      <ConfirmModal
+        isOpen={isOpen}
+        message={message}
+        onConfirm={confirmAction}
+        onCancel={cancelAction}
+      />
     </div>
   );
 };

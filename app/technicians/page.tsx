@@ -6,6 +6,10 @@ import Navbar from '@/components/Navbar';
 import { PencilAltIcon, EyeIcon, TrashIcon } from '@heroicons/react/outline';
 import Image from 'next/image';
 import Link from 'next/link';
+import { useConfirmModal } from '@/utils/hooks/useConfirmModal';
+import toast from 'react-hot-toast';
+import ConfirmModal from '@/components/ConfirmModal';
+import Loader from '@/components/Loader';
 
 interface Technician {
   id: string;
@@ -50,24 +54,29 @@ const Technicians = () => {
   const [technicians, setTechnicians] = useState<Technician[]>([]);
   const [search, setSearch] = useState('');
   const router = useRouter();
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const { isOpen, message, confirmAction, cancelAction, openModal } = useConfirmModal();
 
   useEffect(() => {
     const getTechnicians = async () => {
+      setIsLoading(true);
       const data = await fetchTechnicians(search);
       setTechnicians(data);
+      setIsLoading(false);
     };
     getTechnicians();
   }, [search]);
 
   const handleDelete = async (id: string) => {
-    if (confirm('Are you sure you want to delete this technician?')) {
+    openModal('Are you sure you want to delete this technicians?', async () => {
       try {
         await deleteTechnician(id);
         setTechnicians(technicians.filter(tech => tech.id !== id));
+        toast.success('Technician deleted successfully!');
       } catch (error) {
-        alert('Failed to delete technician.');
+        toast.error('Failed to delete technician.');
       }
-    }
+    });
   };
 
   return (
@@ -104,6 +113,22 @@ const Technicians = () => {
                 </tr>
               </thead>
               <tbody>
+                {isLoading && (
+                  <tr>
+                    <td colSpan={6}>
+                      <div className="flex flex-row justify-center items-center">
+                        {isLoading && <Loader/>}
+                      </div>
+                    </td>
+                  </tr>
+                )}
+                {!isLoading && technicians.length === 0 && (
+                  <td colSpan={6}>
+                    <div className="flex flex-row justify-center items-center">
+                      <p>No Technicians available </p>
+                    </div>
+                  </td>
+                )}
                 {technicians.map((tech) => (
                   <tr key={tech.id} className="hover:bg-blue-50">
                     <td className="border-b p-3">
@@ -144,6 +169,12 @@ const Technicians = () => {
           </div>
         </main>
       </div>
+      <ConfirmModal
+        isOpen={isOpen}
+        message={message}
+        onConfirm={confirmAction}
+        onCancel={cancelAction}
+      />
     </div>
   );
 };

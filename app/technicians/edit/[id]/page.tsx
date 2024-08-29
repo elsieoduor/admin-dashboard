@@ -4,6 +4,8 @@ import { useRouter, useParams } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
 import Navbar from '@/components/Navbar';
 import Image from 'next/image';
+import toast from 'react-hot-toast';
+import Spinner from '@/components/Spinner';
 
 interface Technician {
   id: string;
@@ -59,6 +61,7 @@ const EditTechnician = () => {
   const [technician, setTechnician] = useState<Technician | null>(null);
   const router = useRouter();
   const { id } = useParams();
+  const [isLoading, setIsloading] = useState<boolean>(false);
 
   useEffect(() => {
     const getTechnician = async () => {
@@ -78,13 +81,20 @@ const EditTechnician = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (id && technician) {
+      setIsloading(true);
       try {
         await updateTechnician(id as string, technician);
-        alert('Technician updated successfully!');
-        router.push(`/technicians/${id}`);
+        toast.success('Technician updated successfully!');
+
+        setTimeout(() => {
+          router.push(`/technicians/${id}`);
+        }, 200)
+        
       } catch (error) {
         console.error('Failed to update technician:', error);
-        alert('Failed to update technician.');
+        toast.error('Failed to update technician.');
+      }finally{
+        setIsloading(false)
       }
     }
   };
@@ -200,9 +210,10 @@ const EditTechnician = () => {
               </div>
               <button
                 type="submit"
-                className="bg-blue-500 text-white py-2 px-4 rounded-lg"
+                disabled={isLoading}
+                className="bg-blue-500 text-white py-2 px-4 rounded-lg w-full "
               >
-                Save Changes
+                {isLoading ? <Spinner/>: "Save Changes"}
               </button>
             </form>
           </div>

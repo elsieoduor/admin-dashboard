@@ -3,6 +3,9 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
 import Navbar from '@/components/Navbar';
+import toast from 'react-hot-toast';
+import Spinner from '@/components/Spinner';
+
 
 interface Technician {
   firstName: string;
@@ -53,16 +56,25 @@ const AddTechnician = () => {
   });
   const router = useRouter();
 
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
+    setIsLoading(true);
     try {
       await addTechnician(technician);
-      alert('Technician added successfully!');
-      router.push('/technicians');
+      toast.success('Technician added successfully!');
+      
+      setTimeout(() => {
+        router.push('/technicians');
+      }, 2000);
+  
     } catch (error) {
       console.error('Failed to add technician:', error);
-      alert('Failed to add technician. Please check the console for details.');
+      toast.error('Failed to add technician.');
+    }finally {
+      setIsLoading(false);
     }
   };
 
@@ -182,9 +194,10 @@ const AddTechnician = () => {
               </div>
               <button
                 type="submit"
-                className="bg-blue-500 text-white py-2 px-4 rounded-lg"
+                disabled={isLoading}
+                className="bg-blue-500 text-white py-2 px-4 rounded-lg w-full"
               >
-                Add Technician
+                {isLoading ? <Spinner/> : "Add Technician"}
               </button>
             </form>
           </div>
